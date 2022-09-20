@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script>
+            function init(message){
+                console.log(message.data);
+                alert(message.data.message);
+                injected_foo();
+            }
+            window.addEventListener("message",init,false);
+            function frame_foo(){
+                alert("frame foo");
+            }
+        </script>
+    </head>
+    <body>
+        IFRAME
+        <script>
+            frame_foo();
+        </script>
+    </body>
+</html>

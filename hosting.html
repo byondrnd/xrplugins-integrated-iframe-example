@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script>
+            function hosting_foo(){
+                alert("host foo");
+            }
+            function injected_foo(){
+                alert("injected foo");
+            }
+            function initIframe(){
+                alert("init iframe");
+                var iframe=document.getElementById("iframe");
+                iframe.contentWindow.injected_foo=injected_foo;
+                iframe.contentWindow.postMessage({"message":"init","obj":{"num":3}},"*");
+            }
+        </script>
+    </head>
+    <body>
+        HOSTING
+        <iframe id="iframe" src="./iframe.html" onload="initIframe()"></iframe>
+        <script>
+        </script>
+    </body>
+</html>

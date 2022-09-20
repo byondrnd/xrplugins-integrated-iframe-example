@@ -1,0 +1,12 @@
+{
+    "name": "",
+    "description": "",
+    "short_description": "",
+    "plugin-type": "",
+    "version": "",
+    "icon": "",
+    "categories": [""],
+    "listen_to": [""],
+    "events": [""],
+    "editor_fileds": "json schema"
+}
