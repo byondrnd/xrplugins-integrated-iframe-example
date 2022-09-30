@@ -6,8 +6,8 @@ import {
   customEventType,
 } from "./types";
 
-import configs from "./config.json";
-console.log(configs, "configs")
+// import configs from "./config.json";
+// console.log(configs, "configs")
 const data: configurations = {
   type: "init",
   theming: {

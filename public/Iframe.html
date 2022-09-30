@@ -3,6 +3,7 @@
   <script>
     window.addEventListener("message", function (message) {
       if (message.data.data.type === "init") {
+        alert("init")
         const addToCart = document.querySelector(".add-to-cart");
         addToCart.style.background = message.data.data.theming.primaryColor;
         addToCart.innerHTML = message.data.data.config.button;
