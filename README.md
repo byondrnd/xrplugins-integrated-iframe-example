@@ -10,9 +10,9 @@
 
 => in public folder we have index.html for playground and iframe.html for hosting webpage.
 
-=> Event logger which shows emitted events.
+=> Event logger to shows emitted events.
 
-=> generate events section which will pass events data to iframe using postmessage.
+=> generate events section to pass events data to iframe using postmessage.
 
 => we are also passing configuration objects like theming and configs. currently we are using these to change color and text of button inside iframe.
 
