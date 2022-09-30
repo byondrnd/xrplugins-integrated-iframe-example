@@ -1,0 +1,9 @@
+{
+  "type": "init",
+  "theming": {
+    "primaryColor": "blue"
+  },
+  "config": {
+    "button": "trigger"
+  }
+}

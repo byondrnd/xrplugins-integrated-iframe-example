@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+  <body>
+    <div class="inte-main-div">
+      <div class="inte-columns">
+        <div class="inte-first-row">
+          <div class="inte-iframe-wrapper">
+            <iframe class="inte-iframe"></iframe>
+          </div>
+          <div class="inte-logger-section">
+            <div class="inte-event-logger-div"></div>
+            <div class="inte-event-section">
+              <div class="inte-title">
+                <h1>Events Generator</h1>
+              </div>
+              <div class="inte-child-rows">
+                <div class="inte-child-row-one">
+                  <div class="inte-input-type">
+                    <input class="inte-input" type="text" placeholder="Type" />
+                  </div>
+                  <div class="inte-input-data">
+                    <textarea
+                      cols="40"
+                      rows="5"
+                      class="inte-data"
+                      type="text"
+                      placeholder="Data"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="inte-child-row-two">
+                  <div class="inte-button-wrapper">
+                    <button class="inte-generate-button">Generate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="inte-second-row">
+          <div class="inte-form-section">
+            <div class="inte-inputs">
+              <input
+                id="inte-input-frame"
+                type="text"
+                placeholder="iFrame URL"
+              />
+            </div>
+            <div class="inte-inputs">
+              <input
+                id="inte-input-metadata"
+                type="text"
+                placeholder="Metadata URL"
+              />
+            </div>
+            <div class="inte-inputs">
+              <input
+                id="inte-input-json"
+                type="text"
+                placeholder="JSON schema"
+              />
+            </div>
+            <div class="inte-generate-btn-wrapper">
+              <button class="inte-generate-btn">Generate Form</button>
+            </div>
+            <div class="inte-generate-form">
+              <p>Form</p>
+            </div>
+            <div class="inte-generate-theme">
+              <p>Theming</p>
+            </div>
+            <div class="inte-generate-init">
+              <button class="inte-init-btn">init</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      type="module"
+      src="./js/app.js"
+      async
+      defer
+    ></script>
+  </body>
+</html>

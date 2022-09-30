@@ -1,0 +1,149 @@
+body {
+    overflow: hidden;
+}
+
+.inte-main-div {
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    left: 10%;
+}
+
+  .inte-columns {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 30px;
+    margin-top: 30px;
+  }
+  .inte-first-row {
+    margin: 10px;
+    width: 75%;
+  }
+
+  .inte-iframe-wrapper iframe {
+    height: 66vh;
+    width: 100%;
+    top: 10px;
+  }
+  .inte-form-section {
+    background-color: lightskyblue;
+    height: 90vh;
+    width: 30vh;
+  }
+  .inte-second-row {
+    margin: 10px;
+  }
+  .inte-event-logger-div {
+    position: relative;
+    overflow: auto;
+    height: 200px;
+    width: 48%;
+    border: 2px solid black;
+  }
+  .inte-event-section {
+    overflow: hidden;
+    height: 200px;
+    width: 48%;
+    background-color: lightskyblue;
+    margin-left: 5%;
+  }
+  .inte-logger-section {
+    position: relative;
+    top: 10px;
+    top: 10px;
+    flex-direction: row;
+    display: flex;
+    left: 0px;
+  }
+  .inte-inputs {
+    padding-left: 20px;
+    padding-top: 20px;
+  }
+  .inte-inputs input {
+    height: 50px;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    padding: 20px;
+  }
+  .inte-generate-btn-wrapper {
+        padding-left: 20px;
+        padding-top: 20px;
+   }
+  .inte-generate-btn {
+    height: 50px;
+    width: 221px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+ .inte-generate-form {
+    margin-left: 20px;
+    margin-top: 20px;
+    height: 200px;
+    width: 221px;
+    background-color: #fff;
+    text-align: center;
+ }
+ .inte-generate-theme {
+    text-align: center;
+    margin-left: 20px;
+    display: inline-block;
+  vertical-align: middle;
+    margin-top: 20px;
+    height: 200px;
+    width: 221px;
+    background-color: #fff;
+ }
+
+.inte-generate-theme p {
+    text-align: center;
+ }
+
+ .inte-generate-init {
+    margin-left: 20px;
+    margin-top: 20px;
+ }
+
+ .inte-init-btn {
+    height: 50px;
+    width: 221px;
+    text-align: center;
+    cursor: pointer;
+ }
+
+ .inte-child-rows {
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
+ }
+
+ .inte-generate-button {
+  background-color: #fff;
+  height: 100px;
+  width: 200px;
+  margin-left: 10px;
+  cursor: pointer;
+ }
+
+ .inte-input {
+  height: 20px;
+  text-align: center;
+  border: 1px solid;
+  width: 412px;
+  left:10px;
+ }
+
+ .inte-data {
+  margin-top: 10px;
+  height: 70px;
+  text-align: center;
+  border: 1px solid;
+  width: 412px;
+  overflow: auto;
+ }
+
+ .inte-title {
+  text-align: center;
+ }
