@@ -6,7 +6,7 @@
 
 => To watch errors and activities run "tsc ts"
 
-=> inside src we have app.ts file on which we have injected emit and listen events in iframe.
+=> inside src folder we have app.ts file on which we have injected two functions emit and listen events in iframe.
 
 => in public folder we have index.html for playground and iframe.html for hosting webpage.
 
