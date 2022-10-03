@@ -6,17 +6,11 @@ import {
   customEventType,
 } from "./types";
 
-// import configs from "./config.json";
-// console.log(configs, "configs")
-const data: configurations = {
-  type: "init",
-  theming: {
-    primaryColor: "blue",
-  },
-  config: {
-    button: "trigger",
-  },
-};
+const jsonModule = await import("./config.json", {
+  assert: { type: "json" },
+});
+
+const data: configurations = jsonModule.default;
 const allowedEvents: Array<XREvents> = ["xr_add_to_cart"];
 
 const emitEvent = (XREvent: XREvent) => {
