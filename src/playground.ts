@@ -14,7 +14,6 @@ const data: configurations = jsonModule.default;
 
 const emitEvent = (XREvent: XREvent) => {
   if (Object.keys(XrTypes).includes(XREvent.event)) {
-    console.log(XREvent, "xr");
     parent.postMessage({ XREvent }, "*");
     eventLogger(XREvent);
   } else {
