@@ -1,0 +1,48 @@
+<html>
+  <head></head>
+  <script>
+    window.addEventListener("message", function (message) {
+      const data = message.data.data;
+      if (data.type === "init") {
+        const config = data.config;
+        const addToCart = document.querySelector(".add-to-cart");
+        const theming = data.theming;
+        addToCart.style.background = theming.primaryColor;
+        addToCart.innerHTML = config.button;
+      } else {
+        emitEvent(data);
+        listenToEvent(data.event, showData);
+        const getPre = document.querySelector(".integrated-pre");
+        getPre.innerHTML = JSON.stringify(message.data);
+      }
+    });
+
+    function showData(data) {
+      alert("callback function called");
+      console.log(data, "callback data");
+    }
+    function clicked() {
+      const data = {
+        event: "xr_add_to_cart",
+        customEventName: "custom_event_1",
+        data: {
+          products: {
+            name: "product 1",
+          },
+        },
+      };
+      emitEvent(data);
+      listenToEvent(data.event, showData);
+    }
+  </script>
+  <body>
+    <button
+      class="add-to-cart"
+      style="height: 60px; width: 150px; font-size: 15px; cursor: pointer"
+      onclick="clicked()"
+    >
+      add to cart
+    </button>
+    <pre style="font-size: 18px" class="integrated-pre"></pre>
+  </body>
+</html>

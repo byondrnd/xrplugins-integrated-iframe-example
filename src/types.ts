@@ -1,4 +1,4 @@
-export type XREvents = 'xr_add_to_cart';
+export type XREvents = 'xr_add_to_cart' | 'xr_remove_cart' | 'xr_open' | 'xr_callback';
 
 export interface IThemeConfig {
     primaryColor : string,
@@ -20,9 +20,9 @@ export interface XREvent {
 };
 
 export type customEventType = {
-  type: string;
+  event: string;
   data: any;
-}
+};
 
 export interface CustomWindow extends Window {
   emitEvent: Function;

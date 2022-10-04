@@ -11,7 +11,11 @@ const jsonModule = await import("./config.json", {
 });
 
 const data: configurations = jsonModule.default;
-const allowedEvents: Array<XREvents> = ["xr_add_to_cart"];
+const allowedEvents: Array<XREvents> = [
+  "xr_add_to_cart",
+  "xr_remove_cart",
+  "xr_open",
+];
 
 const emitEvent = (XREvent: XREvent) => {
   if (allowedEvents.includes(XREvent.event)) {
@@ -26,9 +30,17 @@ const messages = (message: MessageEvent) => {
   parent.removeEventListener("message", messages);
 };
 
-const listenToEvent = (XREvents: XREvents) => {
+const listenToEvent = (
+  XREvents: XREvents,
+  callback: (XREvent: any) => void
+) => {
   if (allowedEvents.includes(XREvents)) {
     parent.addEventListener("message", messages);
+    const result = {
+      event: "xr_get_product",
+      product: "proudct_2",
+    };
+    callback(result);
   } else {
     console.error("unsupported event.");
   }
@@ -37,7 +49,13 @@ const listenToEvent = (XREvents: XREvents) => {
 const iframe =
   (document.querySelector(".inte-iframe") as HTMLIFrameElement) || null;
 
-iframe.src = "../Iframe.html";
+iframe.src = "./plugin.html";
+const iframeInput = document.querySelector(
+  "#inte-input-frame"
+) as HTMLInputElement;
+console.log(iframeInput, "iframe");
+iframeInput.value = "plugin.html";
+iframeInput.innerText = "plugin.html";
 
 const initBtn = document.querySelector(".inte-init-btn") as HTMLButtonElement;
 
@@ -45,7 +63,20 @@ const changeIframe = () => {
   const iframeValue = document.getElementById(
     "inte-input-frame"
   ) as HTMLInputElement;
-  iframeValue && (iframe.src = iframeValue.value);
+  if (iframeValue) {
+    iframe.src = iframeValue.value;
+    iframe.onload = init;
+    const iWindow = (iframe?.contentWindow as CustomWindow) || null;
+    iframe.addEventListener("load", function () {
+      iWindow.postMessage(
+        {
+          data,
+        },
+        "*"
+      );
+    });
+    logEvents("init");
+  }
 };
 
 initBtn.addEventListener("click", changeIframe);
@@ -69,7 +100,7 @@ const generateEvent = () => {
   const eventData = document.querySelector(".inte-data") as HTMLTextAreaElement;
   const eventValue = eventData?.value;
   const data: customEventType = {
-    type: typeValue,
+    event: typeValue,
     data: eventValue,
   };
   iframe.contentWindow?.postMessage(
@@ -85,15 +116,8 @@ generateBtn.onclick = generateEvent;
 const init = () => {
   const iWindow = (iframe?.contentWindow as CustomWindow) || null;
   if (iWindow) {
-    logEvents("init");
     iWindow.emitEvent = emitEvent;
     iWindow.listenToEvent = listenToEvent;
-    iWindow.postMessage(
-      {
-        data,
-      },
-      "*"
-    );
   }
 };
 

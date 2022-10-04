@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "ts": "tsc -w",
-    "serve": "cd public && web-dev-server --node-resolve --watch --open --app-index index.html",
+    "serve": "cd public && web-dev-server --node-resolve --watch --open --app-index playground.html",
     "dev": "yarn ts & yarn serve"
   },
   "devDependencies": {

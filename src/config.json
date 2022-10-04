@@ -1,7 +1,7 @@
 {
   "type": "init",
   "theming": {
-    "primaryColor": "blue"
+    "primaryColor": "yellow"
   },
   "config": {
     "button": "trigger"
