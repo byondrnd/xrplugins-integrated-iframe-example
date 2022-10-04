@@ -10,6 +10,8 @@ const jsonModule = await import("./config.json", {
   assert: { type: "json" },
 });
 
+type XrEventType = keyof typeof XrTypes;
+
 const data: configurations = jsonModule.default;
 
 const emitEvent = (XREvent: XREvent) => {
@@ -21,15 +23,18 @@ const emitEvent = (XREvent: XREvent) => {
   }
 };
 
-const callbackHandler = (event: string, callback: Function) => {
+const callbackHandler = (event: XrEventType, callback: Function) => {
   if (Object.keys(XrTypes).includes(event)) {
     callback(event);
   }
 };
 
-const listenToEvent = (XREvents: string, callback: (XREvent: any) => void) => {
-  if (Object.keys(XrTypes).includes(XREvents)) {
-    callbackHandler(XREvents, callback);
+const listenToEvent = (
+  XREvent: XrEventType,
+  callback: (XREvent: any) => void
+) => {
+  if (Object.keys(XrTypes).includes(XREvent)) {
+    callbackHandler(XREvent, callback);
   } else {
     console.error("unsupported event.");
   }
@@ -53,13 +58,13 @@ const initCalled = () => {
   if (iWindow) {
     iWindow.emitEvent = emitEvent;
     iWindow.listenToEvent = listenToEvent;
+    iWindow.postMessage(
+      {
+        data,
+      },
+      "*"
+    );
   }
-  iWindow.postMessage(
-    {
-      data,
-    },
-    "*"
-  );
   eventLogger({
     event: "init",
     from: "playground",
