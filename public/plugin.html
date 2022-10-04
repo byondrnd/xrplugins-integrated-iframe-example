@@ -1,5 +1,15 @@
 <html>
-  <head></head>
+  <head>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 20px;
+      }
+    </style>
+  </head>
   <script>
     window.addEventListener("message", function (message) {
       const data = message.data.data;
@@ -10,17 +20,26 @@
         addToCart.style.background = theming.primaryColor;
         addToCart.innerHTML = config.button;
       } else {
-        emitEvent(data);
-        listenToEvent(data.event, showData);
-        const getPre = document.querySelector(".integrated-pre");
-        getPre.innerHTML = JSON.stringify(message.data);
+        if (data.event) {
+          emitEvent(data);
+          listenToEvent(data.event, showData);
+          const eventName = document.createElement("td");
+          eventName.innerText = data.event;
+          const eventData = document.createElement("td");
+          eventData.innerText = JSON.stringify(data);
+          const getTable = document.querySelector(".plugin-table");
+          const tableRow = document.createElement("tr");
+          tableRow.appendChild(eventName);
+          tableRow.appendChild(eventData);
+          getTable.appendChild(tableRow);
+        }
       }
     });
 
     function showData(data) {
-      alert("callback function called");
       console.log(data, "callback data");
     }
+
     function clicked() {
       const data = {
         event: "xr_add_to_cart",
@@ -31,8 +50,10 @@
           },
         },
       };
-      emitEvent(data);
-      listenToEvent(data.event, showData);
+      if (typeof emitEvent === "function") {
+        emitEvent(data);
+        listenToEvent(data.event, showData);
+      }
     }
   </script>
   <body>
@@ -43,6 +64,14 @@
     >
       add to cart
     </button>
-    <pre style="font-size: 18px" class="integrated-pre"></pre>
+    <table
+      class="plugin-table"
+      style="border: 2px solid black; top: 10px; position: relative"
+    >
+      <tr>
+        <td>event name</td>
+        <td>event data</td>
+      </tr>
+    </table>
   </body>
 </html>
