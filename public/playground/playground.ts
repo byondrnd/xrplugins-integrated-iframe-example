@@ -1,3 +1,5 @@
+const { Subject } = rxjs;
+
 import {
   XREvent,
   XrTypes,
@@ -5,6 +7,8 @@ import {
   configurations,
   customEventType,
 } from "./types";
+
+const subject = new Subject();
 
 const jsonModule = await import("./config.json", {
   assert: { type: "json" },
@@ -16,22 +20,20 @@ const data: configurations = jsonModule.default;
 
 const emitEvent = (XREvent: XREvent) => {
   if (Object.keys(XrTypes).includes(XREvent.event)) {
-    parent.postMessage({ XREvent }, "*");
     eventLogger(XREvent);
+    subject.next(XREvent);
   } else {
     console.error("wrong event passed on emit.");
   }
 };
 
-const callbackHandler = (event: XrEventType, callback: Function) => {
-  if (Object.keys(XrTypes).includes(event)) {
-    callback(event);
-  }
-};
+subject.subscribe((data: any) => {
+  listenToEvent(data.event, data?.callBack);
+});
 
 const listenToEvent = (
   XREvent: XrEventType,
-  callback: (XREvent: any) => void
+  callback?: (XREvent: any) => void
 ) => {
   if (Object.keys(XrTypes).includes(XREvent)) {
     callbackHandler(XREvent, callback);
@@ -40,16 +42,24 @@ const listenToEvent = (
   }
 };
 
+const callbackHandler = (event: XrEventType, callback?: Function) => {
+  if (Object.keys(XrTypes).includes(event)) {
+    callback?.(event);
+  }
+};
+
 const iframe =
   (document.querySelector(".inte-iframe") as HTMLIFrameElement) || null;
 
-iframe.src = "./plugin.html";
+iframe.src = "../plugin/plugin.html";
 
 const iframeInput = document.querySelector(
   "#inte-input-frame"
 ) as HTMLInputElement;
-iframeInput.value = "plugin.html";
-iframeInput.innerText = "plugin.html";
+
+iframeInput.value = "../plugin/plugin.html";
+
+iframeInput.innerText = "../plugin/plugin.html";
 
 const initBtn = document.querySelector(".inte-init-btn") as HTMLButtonElement;
 
@@ -65,16 +75,21 @@ const initCalled = () => {
       "*"
     );
   }
+
   eventLogger({
     event: "init",
+    data: null,
     from: "playground",
   });
+
   iframe.removeEventListener("click", initCalled);
 };
+
 const changeIframe = () => {
   const iframeValue = document.getElementById(
     "inte-input-frame"
   ) as HTMLInputElement;
+
   if (iframeValue) {
     iframe.src = iframeValue.value;
     iframe.addEventListener("load", initCalled);
@@ -87,13 +102,15 @@ const eventLogger = (e: any) => {
   const eventLoggerDiv = document.querySelector(
     ".inte-event-logger-div"
   ) as HTMLDivElement;
+
   const p = document.createElement("p");
   if (e.from === "playground") {
     p.style.color = "blue";
   } else {
     p.style.color = "orange";
   }
-  p.innerText = "=>" + JSON.stringify(e.event);
+  p.innerText = "=>" + e.event;
+
   eventLoggerDiv.appendChild(p);
 };
 
@@ -106,11 +123,13 @@ const generateEvent = () => {
   const typeValue = type?.value;
   const eventData = document.querySelector(".inte-data") as HTMLTextAreaElement;
   const eventValue = eventData?.value;
+
   const data: customEventType = {
     event: typeValue,
     data: eventValue,
     from: "playground",
   };
+
   iframe.contentWindow?.postMessage(
     {
       data,
