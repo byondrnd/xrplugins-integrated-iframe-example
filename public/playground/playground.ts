@@ -1,5 +1,3 @@
-const { Subject } = rxjs;
-
 import {
   XREvent,
   XrTypes,
@@ -7,8 +5,6 @@ import {
   configurations,
   customEventType,
 } from "./types";
-
-const subject = new Subject();
 
 // Gather plugin configuration
 const jsonModule = await import("./config.json", {
@@ -31,12 +27,10 @@ iframeInput.value = "../plugin/plugin.html";
 iframeInput.innerText = "../plugin/plugin.html";
 const initBtn = document.querySelector(".inte-init-btn") as HTMLButtonElement;
 
-
 // Initialize iframe source and trigger init event inside it
 const initCalled = () => {
   const iWindow = (iframe?.contentWindow as CustomWindow) || null;
   if (iWindow) {
-
     // Inject emit and listen functions
     iWindow.emitEvent = emitEvent;
     iWindow.listenToEvent = listenToEvent;
@@ -107,11 +101,7 @@ const generateEvent = () => {
     data: eventValue,
     from: "playground",
   };
-
-  if (data.event) {
-    subject.next(data);
-  }
-
+  emitEvent(data)
   iframe.contentWindow?.postMessage(
     {
       data,
@@ -121,22 +111,18 @@ const generateEvent = () => {
 };
 
 generateBtn.onclick = generateEvent;
-
 // Emits event from iframe to playground and pass the XREvent object
 const emitEvent = (XREvent: XREvent) => {
+  console.log(XREvent.event, "event")
   if (Object.keys(XrTypes).includes(XREvent.event)) {
     eventLogger(XREvent);
-    subject.next(XREvent);
+    iframe.contentWindow?.postMessage(XREvent);
   } else {
     console.error("wrong event passed on emit.");
   }
 };
 
 // Subscribe and listen to all the events coming up from the iframe
-subject.subscribe((data: any) => {
-  listenToEvent(data.event, data?.callBack);
-});
-
 
 // Listen event callback handler
 const listenToEvent = (
@@ -144,8 +130,11 @@ const listenToEvent = (
   callback?: (XREvent: any) => void
 ) => {
   if (Object.keys(XrTypes).includes(XREvent)) {
-    alert(XREvent);
-    callbackHandler(XREvent, callback);
+    iframe.contentWindow?.addEventListener("message", function (e) {
+      if (e.data.event === XREvent) {
+        callbackHandler(XREvent, callback);
+      }
+    });
   } else {
     console.error("unsupported event.");
   }

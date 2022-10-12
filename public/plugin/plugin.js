@@ -11,26 +11,25 @@ window.addEventListener("message", function (message) {
     const addToCart = document.querySelector(".add-to-cart");
     addToCart.innerHTML = config.button;
     addToCart.style.background = theming.primaryColor;
+    listenToEvent("xr_added_to_cart", (e) => {
+      alert("The listener of the plugin is triggered");
+    });
   }
 });
-
-function showData() {
-  alert("Callback function successfully triggered");
-}
 
 // This function will be called on trigger event click
 function clicked() {
   const data = {
-    event: "xr_add_to_cart",
+    event: "xr_added_to_cart",
     customEventName: "custom_event_1",
     data: {
       products: {
         name: "product 1",
       },
     },
-    callBack: showData,
   };
 
+  console.log(data, "data");
   // Emitting xr_add_to_cart with data
   emitEvent(data);
 }

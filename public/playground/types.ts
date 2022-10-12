@@ -1,5 +1,5 @@
 export enum XrTypes {
-  xr_add_to_cart,
+  xr_added_to_cart,
   xr_remove_cart,
   xr_open,
   xr_callback,
@@ -33,4 +33,5 @@ export type customEventType = {
 export interface CustomWindow extends Window {
   emitEvent: Function;
   listenToEvent: Function;
+  attachEvent: any;
 }
