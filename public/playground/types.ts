@@ -20,7 +20,7 @@ export interface configurations {
 }
 export interface XREvent {
   event: string;
-  customEventName: string;
+  customEventName?: string;
   data: object;
 }
 

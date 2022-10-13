@@ -94,14 +94,15 @@ const generateEvent = () => {
   const type = document.querySelector(".inte-input") as HTMLInputElement;
   const typeValue = type?.value;
   const eventData = document.querySelector(".inte-data") as HTMLTextAreaElement;
-  const eventValue = eventData?.value;
+  const eventValue = eventData?.value as any;
+  const parsedValue = JSON.parse(eventValue);
 
   const data: customEventType = {
     event: typeValue,
-    data: eventValue,
+    data: parsedValue,
     from: "playground",
   };
-  emitEvent(data)
+
   iframe.contentWindow?.postMessage(
     {
       data,
@@ -113,7 +114,6 @@ const generateEvent = () => {
 generateBtn.onclick = generateEvent;
 // Emits event from iframe to playground and pass the XREvent object
 const emitEvent = (XREvent: XREvent) => {
-  console.log(XREvent.event, "event")
   if (Object.keys(XrTypes).includes(XREvent.event)) {
     eventLogger(XREvent);
     iframe.contentWindow?.postMessage(XREvent);
@@ -130,9 +130,12 @@ const listenToEvent = (
   callback?: (XREvent: any) => void
 ) => {
   if (Object.keys(XrTypes).includes(XREvent)) {
+    alert("Plugin will listen to " + XREvent + " from now on wards");
+
     iframe.contentWindow?.addEventListener("message", function (e) {
-      if (e.data.event === XREvent) {
-        callbackHandler(XREvent, callback);
+      if (e.data.data.event === XREvent || e.data.event === XREvent) {
+        const XrEventData = e.data.data.event ? e.data.data : e.data;
+        callbackHandler(XrEventData, callback);
       }
     });
   } else {
@@ -141,8 +144,9 @@ const listenToEvent = (
 };
 
 // Iframe callback handler
-const callbackHandler = (event: XrEventType, callback?: Function) => {
-  if (Object.keys(XrTypes).includes(event)) {
-    callback?.(event);
+const callbackHandler = (XRevent: any, callback?: Function) => {
+  const xrEvent = XRevent.event as XrEventType;
+  if (Object.keys(XrTypes).includes(xrEvent)) {
+    callback?.(XRevent.data);
   }
 };

@@ -12,7 +12,7 @@ window.addEventListener("message", function (message) {
     addToCart.innerHTML = config.button;
     addToCart.style.background = theming.primaryColor;
     listenToEvent("xr_added_to_cart", (e) => {
-      alert("The listener of the plugin is triggered");
+      alert("The listener of the plugin is triggered with data: " + JSON.stringify(e));
     });
   }
 });
@@ -28,9 +28,6 @@ function clicked() {
       },
     },
   };
-
-  console.log(data, "data");
-  // Emitting xr_add_to_cart with data
   emitEvent(data);
 }
 
