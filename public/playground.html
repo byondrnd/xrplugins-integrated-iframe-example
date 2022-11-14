@@ -23,14 +23,13 @@
                   </div>
                   <div class="inte-input-data">
                     <textarea
-                      cols="40"
-                      rows="5"
                       class="inte-data"
                       type="text"
                       placeholder="Data"
                     ></textarea>
                   </div>
                 </div>
+
                 <div class="inte-child-row-two">
                   <div class="inte-button-wrapper">
                     <button class="inte-generate-button">Generate</button>
@@ -49,8 +48,24 @@
                 placeholder="iFrame URL"
               />
             </div>
+            <div class="inte-inputs">
+              <input
+                id="inte-input-schema"
+                type="text"
+                placeholder="Json schema"
+              />
+            </div>
             <div class="inte-generate-init">
-              <button class="inte-init-btn">init</button>
+              <button class="inte-generate-btn">Generate Form</button>
+            </div>
+            <div class="inte-schema-form"></div>
+            <div>
+              <button class="inte-copy-text">Copy to clipboard</button>
+            </div>
+            <div class="inte-generate-init">
+              <button class="inte-init-btn" form="myForm" type="submit">
+                init
+              </button>
             </div>
           </div>
         </div>

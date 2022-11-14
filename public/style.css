@@ -1,149 +1,222 @@
 body {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .inte-main-div {
-    height: 100%;
-    width: 100%;
-    background-color: white;
-    left: 10%;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  left: 10%;
 }
 
-  .inte-columns {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-left: 30px;
-    margin-top: 30px;
-  }
-  .inte-first-row {
-    margin: 10px;
-    width: 75%;
-  }
+.inte-columns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: 30px;
+  margin-top: 30px;
+}
 
-  .inte-iframe-wrapper iframe {
-    height: 66vh;
-    width: 100%;
-    top: 10px;
-  }
-  .inte-form-section {
-    background-color: lightskyblue;
-    height: 25vh;
-    width: 30vh;
-  }
-  .inte-second-row {
-    margin: 10px;
-  }
-  .inte-event-logger-div {
-    position: relative;
-    overflow: auto;
-    height: 200px;
-    width: 48%;
-    border: 2px solid black;
-  }
-  .inte-event-section {
-    overflow: hidden;
-    height: 200px;
-    width: 48%;
-    background-color: lightskyblue;
-    margin-left: 5%;
-  }
-  .inte-logger-section {
-    position: relative;
-    top: 10px;
-    top: 10px;
-    flex-direction: row;
-    display: flex;
-    left: 0px;
-  }
-  .inte-inputs {
-    padding-left: 20px;
-    padding-top: 20px;
-  }
-  .inte-inputs input {
-    height: 50px;
-    align-items: center;
-    align-self: center;
-    align-content: center;
-    padding: 20px;
-  }
-  .inte-generate-btn-wrapper {
-        padding-left: 20px;
-        padding-top: 20px;
-   }
-  .inte-generate-btn {
-    height: 50px;
-    width: 221px;
-    text-align: center;
-    cursor: pointer;
-  }
+.inte-first-row {
+  margin: 10px;
+  width: 70%;
+}
 
- .inte-generate-form {
-    margin-left: 20px;
-    margin-top: 20px;
-    height: 200px;
-    width: 221px;
-    background-color: #fff;
-    text-align: center;
- }
- .inte-generate-theme {
-    text-align: center;
-    margin-left: 20px;
-    display: inline-block;
+.inte-iframe-wrapper iframe {
+  height: 66vh;
+  width: 100%;
+  top: 10px;
+}
+
+.inte-form-section {
+  background-color: lightskyblue;
+}
+
+.inte-second-row {
+  overflow: hidden;
+  background-color: lightskyblue;
+  margin: 10px;
+  width: 25%;
+}
+
+.inte-event-logger-div {
+  position: relative;
+  overflow: auto;
+  height: 200px;
+  width: 48%;
+  border: 2px solid black;
+}
+
+.inte-event-section {
+  overflow: hidden;
+  height: 200px;
+  width: 48%;
+  background-color: lightskyblue;
+  margin-left: 5%;
+}
+
+.inte-logger-section {
+  position: relative;
+  top: 10px;
+  top: 10px;
+  flex-direction: row;
+  display: flex;
+  left: 0px;
+}
+
+.inte-inputs {
+  width: 95%;
+  margin: 2.5%;
+}
+
+.inte-inputs input {
+  height: 50px;
+  text-align: start;
+}
+
+.inte-generate-btn-wrapper {
+  margin: 3%;
+}
+
+.inte-generate-btn {
+  height: 50px;
+  width: 95%;
+  text-align: center;
+  cursor: pointer;
+}
+
+.inte-generate-form {
+  margin-left: 20px;
+  margin-top: 20px;
+  height: 200px;
+  width: 221px;
+  background-color: #fff;
+  text-align: center;
+}
+
+.inte-generate-theme {
+  text-align: center;
+  margin-left: 20px;
+  display: inline-block;
   vertical-align: middle;
-    margin-top: 20px;
-    height: 200px;
-    width: 221px;
-    background-color: #fff;
- }
+  margin-top: 20px;
+  height: 200px;
+  width: 221px;
+  background-color: #fff;
+}
 
 .inte-generate-theme p {
-    text-align: center;
- }
+  text-align: center;
+}
 
- .inte-generate-init {
-    margin-left: 20px;
-    margin-top: 20px;
- }
+.inte-generate-init {
+  width: 95%;
+  margin: 4%;
+}
 
- .inte-init-btn {
-    height: 50px;
-    width: 221px;
-    text-align: center;
-    cursor: pointer;
- }
+.inte-init-btn {
+  height: 50px;
+  width: 95%;
+  text-align: center;
+  cursor: pointer;
+}
 
- .inte-child-rows {
+.inte-child-rows {
   display: flex;
   flex-direction: row;
   margin: 5px;
- }
+}
 
- .inte-generate-button {
+.inte-generate-button {
   background-color: #fff;
   height: 100px;
   width: 150px;
   margin-left: 10px;
   cursor: pointer;
- }
+}
 
- .inte-input {
+.inte-input {
   height: 20px;
   text-align: center;
   border: 1px solid;
   width: 412px;
-  left:10px;
- }
+}
 
- .inte-data {
+.inte-data {
   margin-top: 10px;
   height: 70px;
   text-align: center;
   border: 1px solid;
   width: 412px;
   overflow: auto;
- }
+}
 
- .inte-title {
+.inte-title {
   text-align: center;
- }
+}
+
+select {
+  height: 30px;
+  width: 95%;
+  margin: 3%;
+}
+
+.inte-form-div {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+  align-self: center;
+  background-color: white;
+}
+
+.inte-schema-form {
+  height: 330px;
+  width: 90%;
+  background-color: #fff;
+  position: relative;
+  margin: 5%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.inte-inputs-radio input {
+  width: 30px;
+}
+
+input {
+  width: 100%;
+  margin-top: 5px;
+}
+
+button {
+  margin: 0 auto;
+}
+
+.main-div {
+  position: relative;
+  top: 10px;
+}
+
+.inte-radio-input-main {
+  position: relative;
+  margin: 5%;
+}
+
+.main-div select {
+  top: 10px;
+}
+
+.textarea-main-div {
+  width: 95%;
+  margin: 5.5%;
+}
+
+textarea {
+  width: 95%;
+}
+
+label {
+  text-transform: capitalize;
+  font-size: 15px;
+  font-family: 'Courier New', Courier, monospace;
+}

@@ -4,7 +4,245 @@ import {
   CustomWindow,
   configurations,
   customEventType,
+  values,
 } from "./types";
+
+const jsonScheme = await import("./jsonSchemaTest.json", {
+  assert: { type: "json" },
+});
+
+let dataArray: Array<HTMLElement> = [];
+let count = 0;
+const createInput = (value: values, count: number, key: string) => {
+  const inputDiv = document.createElement("div") as HTMLDivElement;
+  if (value.title) {
+    const inputLabel = document.createElement("label") as HTMLLabelElement;
+    inputLabel.innerText = value.title;
+    inputDiv.append(inputLabel);
+  }
+  inputDiv.classList.add("inte-inputs");
+  const input = document.createElement("input") as HTMLInputElement;
+  value?.format == "date" && (input.type = "date");
+  if (value?.text) {
+    input.value = value.text;
+  } else {
+    input.value = "";
+  }
+  input.name = key;
+  value?.placeHolder && (input.placeholder = value.placeHolder);
+  input.classList.add("inte-input-frame");
+  inputDiv.append(input);
+  return inputDiv;
+};
+
+const radiobuilder = (value: string, key: string) => {
+  const formDivRadio = document.createElement("div") as HTMLDivElement;
+  formDivRadio.classList.add("inte-inputs-radio");
+  const radio = document.createElement("input") as HTMLInputElement;
+  radio.value = value;
+  radio.type = "radio";
+  radio.name = key;
+  radio.id = value;
+  formDivRadio.append(radio);
+  const label = document.createElement("label") as HTMLLabelElement;
+  label.setAttribute("for", value);
+  label.textContent = value;
+  formDivRadio.append(label);
+  return formDivRadio;
+};
+
+const selectionBuilder = (values: values, key: string) => {
+  const select = document.createElement("select") as HTMLSelectElement;
+  select.name = key;
+  values?.enum?.map((elem) => {
+    const option = document.createElement("option");
+    option.text = elem;
+    select?.append(option);
+  });
+  return select;
+};
+
+const createRadio = (
+  radioDiv: any,
+  options: any,
+  key: string,
+  labelText?: string
+) => {
+  const mainRadioDiv = document.createElement("div") as HTMLDivElement;
+  mainRadioDiv.classList.add("inte-radio-input-main");
+  if (labelText) {
+    const radioLabel = document.createElement("label") as HTMLLabelElement;
+    radioLabel.innerText = labelText;
+    mainRadioDiv.append(radioLabel);
+  }
+  Object.entries(options)?.map((elem: any) => {
+    const inputDiv = radiobuilder(elem[1], key);
+    mainRadioDiv.append(inputDiv);
+  });
+  radioDiv.append(mainRadioDiv);
+};
+
+const textareaBuilder = (value: values) => {
+  const textareaMainDiv = document.createElement("div") as HTMLDivElement;
+  if (value?.title) {
+    const textareaLabel = document.createElement("label") as HTMLLabelElement;
+    textareaLabel.classList.add("textarea-label");
+    textareaLabel.innerText = value.title;
+    textareaMainDiv.append(textareaLabel);
+  }
+  textareaMainDiv.classList.add("textarea-main-div");
+  const textarea = document.createElement("textarea") as HTMLTextAreaElement;
+  textarea.classList.add("inte-textarea");
+  value.col && (textarea.cols = Number(value.col));
+  value.row && (textarea.rows = Number(value.row));
+  value.placeHolder && (textarea.placeholder = value.placeHolder);
+  textareaMainDiv.append(textarea);
+  return textareaMainDiv;
+};
+
+const formCreation = (
+  values: values,
+  MainformDiv: any,
+  count: number,
+  key: string
+) => {
+  const formDiv = document.createElement("div");
+  formDiv.classList.add("inte-inputs");
+  if (values.type == "string") {
+    const inputString = createInput(values, count, key);
+    formDiv?.append(inputString);
+    MainformDiv?.append(formDiv);
+  } else if (values.type == "selection") {
+    const select = selectionBuilder(values, key);
+    formDiv.append(select);
+    MainformDiv.append(formDiv);
+  } else if (values.type == "radio") {
+    const options = Object(values.options);
+    const labelText = values.title;
+    createRadio(MainformDiv, options, key, labelText);
+  } else if (values.type == "textarea") {
+    const textarea = textareaBuilder(values);
+    MainformDiv.append(textarea);
+  }
+};
+
+const form = document.createElement("form") as HTMLFormElement;
+form.id = "myForm";
+form.classList.add("form-list");
+
+const MainformDiv = document.createElement("div") as HTMLDivElement;
+MainformDiv.classList.add("inte-form-div");
+const dataObj = {} as any;
+
+const generateChildJson = (json: any) => {
+  let childObj = {} as any;
+  if (json.type != "string") {
+    for (const [key, value] of Object.entries(json)) {
+      let data = value as any;
+      if (data[key] != "string") {
+        if (data["type"] == "string") {
+          childObj[key] = "";
+        } else if (data != "object") {
+          let val = generateChildJson(data);
+          childObj[key] = val;
+        }
+      } else {
+        childObj[key] = "";
+      }
+    }
+    return childObj;
+  }
+};
+
+const generateEmptyJson = (json: any) => {
+  for (const [key, value] of Object.entries(json)) {
+    let data = value as any;
+    if (data["type"] != "string") {
+      dataObj[key] = typeof value === "object" ? {} : "";
+      if (dataObj[key]) {
+        let obj = value as any;
+        for (const [childKey, value] of Object.entries(obj)) {
+          let dataVal = value as any;
+          if (dataVal != "object") {
+            dataObj[key][childKey] = generateChildJson(value);
+          }
+        }
+      }
+    } else {
+      if (key != "type") dataObj[key] = "";
+    }
+  }
+};
+
+function addDynamicForms(jsonObject: any, isChild?: boolean, remove?: boolean) {
+  if (count == 0) {
+    MainformDiv.innerHTML = "";
+  }
+  const schemaForm = document.querySelector(
+    ".inte-schema-form"
+  ) as HTMLDivElement;
+  const checkIfDivExist = document.querySelector(
+    ".form-list"
+  ) as HTMLDivElement;
+
+  if (checkIfDivExist && remove) {
+    checkIfDivExist.remove();
+    dataArray = [];
+  }
+
+  for (const [key, value] of Object.entries(jsonObject)) {
+    const values = value as values;
+    formCreation(values, MainformDiv, count, key);
+    if (values.type == "object") {
+      addDynamicForms(values, true, false);
+    }
+    count = count + 1;
+  }
+
+  if (dataArray.length > 0) {
+    dataArray.forEach((elem) => {
+      MainformDiv.append(elem);
+    });
+  }
+  form.append(MainformDiv);
+  schemaForm.append(form);
+  count = 0;
+}
+
+async function formBuilder() {
+  const jsonSchema = document.querySelector(
+    "#inte-input-schema"
+  ) as HTMLInputElement;
+  const schema = jsonSchema.value;
+  const getSchemaData = await fetch(schema);
+  const json = await getSchemaData.json();
+  const jsonSchemaObj = schema !== "" ? json : jsonScheme.default;
+  if (jsonSchemaObj) {
+    generateEmptyJson(jsonSchemaObj);
+    addDynamicForms(jsonSchemaObj, false, true);
+  }
+}
+
+const copyToClipboardButton = document.querySelector(
+  ".inte-copy-text"
+) as HTMLDivElement;
+
+function copyToClipboard() {
+  const form = new FormData(
+    document.getElementById("myForm") as HTMLFormElement
+  );
+  let object: any = {};
+  for (const [key, value] of form) {
+    object[key] = value;
+  }
+}
+
+copyToClipboardButton.addEventListener("click", copyToClipboard);
+
+const generateFormButton = document.querySelector(
+  ".inte-generate-btn"
+) as HTMLButtonElement;
+generateFormButton.addEventListener("click", formBuilder);
 
 // Gather plugin configuration
 const jsonModule = await import("./config.json", {
@@ -20,9 +258,11 @@ const data: configurations = jsonModule.default;
 const iframe =
   (document.querySelector(".inte-iframe") as HTMLIFrameElement) || null;
 iframe.src = "../plugin/plugin.html";
+
 const iframeInput = document.querySelector(
   "#inte-input-frame"
 ) as HTMLInputElement;
+
 iframeInput.value = "../plugin/plugin.html";
 iframeInput.innerText = "../plugin/plugin.html";
 const initBtn = document.querySelector(".inte-init-btn") as HTMLButtonElement;
@@ -50,12 +290,13 @@ const initCalled = () => {
     data: null,
     from: "playground",
   });
-
   iframe.removeEventListener("click", initCalled);
 };
 
 // Change the iframe source
-const changeIframe = () => {
+const changeIframe = (e: any) => {
+  e.preventDefault();
+
   const iframeValue = document.getElementById(
     "inte-input-frame"
   ) as HTMLInputElement;
@@ -82,7 +323,7 @@ const eventLogger = (e: any) => {
   }
   p.innerText = "=>" + e.event;
 
-  eventLoggerDiv.appendChild(p);
+  eventLoggerDiv.append(p);
 };
 
 const generateBtn = document.querySelector(
@@ -103,7 +344,7 @@ const generateEvent = () => {
     from: "playground",
   };
 
-  iframe.contentWindow?.postMessage(
+  iframe?.contentWindow?.postMessage(
     {
       data,
     },

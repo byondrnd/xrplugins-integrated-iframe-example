@@ -1,0 +1,82 @@
+{
+  "type": "object",
+  "properties": {
+    "firstName": {
+      "type": "string",
+      "minLength": 3,
+      "title": "first name",
+      "text": "",
+      "placeHolder": "Please enter your first name"
+    },
+    "secondName": {
+      "type": "string",
+      "minLength": 3,
+      "title": "second name",
+      "text": "Please enter your second name",
+      "placeHolder": "Please enter your second name"
+    },
+    "about": {
+      "type": "textarea",
+      "title": "Tell us about your self",
+      "text": "Please enter your second name",
+      "placeHolder": "",
+      "row": "10"
+    },
+    "veg": {
+      "options": {
+        "options1": "nah",
+        "options2": "yeah"
+      },
+      "title": "Are you male ?",
+      "type": "radio"
+    },
+    "birthDate": {
+      "type": "string",
+      "format": "date",
+      "placeHolder": "Please enter your birth date."
+    },
+    "nationality": {
+      "type": "selection",
+      "enum": ["DE", "IT", "JP", "US", "RU", "Other"]
+    },
+    "address": {
+      "type": "object",
+      "title": "ADDRESS",
+      "properties": {
+        "street": {
+          "type": "string",
+          "text": "danilimda",
+          "title": "street"
+        },
+        "streetNumber": {
+          "type": "string",
+          "text": "19",
+          "title": "street no"
+        },
+        "city": {
+          "type": "string",
+          "text": "ahmedabad",
+          "title": "city"
+        },
+        "postalCode": {
+          "type": "string",
+          "text": "380028",
+          "maxLength": 5,
+          "title": "postal code"
+        },
+        "vegetarian": {
+          "options": {
+            "options1": "yes",
+            "options2": "no"
+          },
+          "title": "Are you Vegetarion ?",
+          "type": "radio"
+        },
+        "nationality": {
+          "type": "selection",
+          "enum": ["DE", "IT", "JP", "US", "RU", "Other"]
+        }
+      }
+    }
+  }
+}

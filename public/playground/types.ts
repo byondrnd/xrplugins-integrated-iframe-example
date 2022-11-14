@@ -3,8 +3,37 @@ export enum XrTypes {
   xr_remove_cart,
   xr_open,
   xr_callback,
+}
+
+export type values = {
+  type: string;
+  minLength?: number;
+  description?: string;
+  placeHolder?: string;
+  text: string;
+  format?: string;
+  row?: string | number;
+  col?: string | number;
+  enum?: Array<string>;
+  ["name"]: {
+    text: any;
+  };
+  options?: Array<object>;
+  title: string;
+  properties: {
+    [key: string]: values;
+  };
 };
 
+export interface jsonSchema {
+  properties: {
+    ["name"]: {
+      type: string;
+      format: string;
+      ["name"]: any;
+    };
+  };
+}
 export interface IThemeConfig {
   primaryColor: string;
 }
