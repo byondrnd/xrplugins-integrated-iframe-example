@@ -220,3 +220,8 @@ label {
   font-size: 15px;
   font-family: 'Courier New', Courier, monospace;
 }
+
+.form-list {
+  top: 30px;
+  position: relative;
+}
