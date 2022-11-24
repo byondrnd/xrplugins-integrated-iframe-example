@@ -11,6 +11,16 @@ const jsonScheme = await import("./jsonSchemaTest.json", {
   assert: { type: "json" },
 });
 
+let Initialize = false;
+
+let emittedEvents = [] as string[];
+
+declare global {
+  interface Window {
+    MyNamespace: any;
+  }
+}
+
 let dataArray: Array<HTMLElement> = [];
 let count = 0;
 const createInput = (value: values, count: number, key: string) => {
@@ -277,13 +287,6 @@ const data: configurations = jsonModule.default;
 const iframe =
   (document.querySelector(".inte-iframe") as HTMLIFrameElement) || null;
 iframe.src = "../plugin/plugin.html";
-
-const iframeInput = document.querySelector(
-  "#inte-input-frame"
-) as HTMLInputElement;
-
-iframeInput.value = "../plugin/plugin.html";
-iframeInput.innerText = "../plugin/plugin.html";
 const initBtn = document.querySelector(".inte-init-btn") as HTMLButtonElement;
 
 function isEmpty(obj: any) {
@@ -296,11 +299,10 @@ function isEmpty(obj: any) {
 }
 // Initialize iframe source and trigger init event inside it
 const initCalled = () => {
+  emittedEvents = [];
   const iWindow = (iframe?.contentWindow as CustomWindow) || null;
   if (iWindow) {
-    // Inject emit and listen functions
-    iWindow.emitEvent = emitEvent;
-    iWindow.listenToEvent = listenToEvent;
+    Initialize = true;
 
     // Trigger init event inside the iframe
     eachRecursive(dataObj);
@@ -363,6 +365,8 @@ const eventLogger = (e: any) => {
   eventLoggerDiv.append(p);
 };
 
+(window.parent as any).eventLogger = eventLogger;
+
 const generateBtn = document.querySelector(
   ".inte-generate-button"
 ) as HTMLButtonElement;
@@ -380,51 +384,44 @@ const generateEvent = () => {
     data: parsedValue,
     from: "playground",
   };
-
-  iframe?.contentWindow?.postMessage(
-    {
-      data,
-    },
-    "*"
-  );
+  if (
+    Object.keys(XrTypes).includes(typeValue) &&
+    emittedEvents.includes(typeValue)
+  ) {
+    iframe?.contentWindow?.postMessage(
+      {
+        event: typeValue,
+        data: parsedValue,
+      },
+      "*"
+    );
+    eventLogger(data);
+  }
 };
 
 generateBtn.onclick = generateEvent;
+
 // Emits event from iframe to playground and pass the XREvent object
 const emitEvent = (XREvent: XREvent) => {
-  if (Object.keys(XrTypes).includes(XREvent.event)) {
-    eventLogger(XREvent);
-    iframe.contentWindow?.postMessage(XREvent);
-  } else {
-    console.error("wrong event passed on emit.");
+  if (Object.keys(XrTypes).includes(XREvent.event) && Initialize == true) {
+    listenToEvent(XREvent);
   }
 };
 
-// Subscribe and listen to all the events coming up from the iframe
+//Listen To event from iframe to playground events.
 
-// Listen event callback handler
-const listenToEvent = (
-  XREvent: XrEventType,
-  callback?: (XREvent: any) => void
-) => {
-  if (Object.keys(XrTypes).includes(XREvent)) {
-    alert("Plugin will listen to " + XREvent + " from now on wards");
-
-    iframe.contentWindow?.addEventListener("message", function (e) {
-      if (e.data.data.event === XREvent || e.data.event === XREvent) {
-        const XrEventData = e.data.data.event ? e.data.data : e.data;
-        callbackHandler(XrEventData, callback);
-      }
-    });
-  } else {
-    console.error("unsupported event.");
-  }
+const listenToEvent = (XREvent: XREvent) => {
+  eventLogger(XREvent);
+  alert("callBack called playground");
 };
 
-// Iframe callback handler
-const callbackHandler = (XRevent: any, callback?: Function) => {
-  const xrEvent = XRevent.event as XrEventType;
-  if (Object.keys(XrTypes).includes(xrEvent)) {
-    callback?.(XRevent.data);
+// Subscribe and listen to emitEvent
+
+parent.addEventListener("message", function (e) {
+  if (e.data.eventType == "emit") {
+    if (!emittedEvents.includes(e.data.event)) {
+      emittedEvents.push(e.data.event);
+    }
+    emitEvent(e.data);
   }
-};
+});
