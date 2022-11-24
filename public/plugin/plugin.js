@@ -1,21 +1,22 @@
-import pluginData from "./config.json" assert { type: "json" };
-
-const config = pluginData.config;
-
-const theming = pluginData.theming;
-
 //postMessage listener to listen init event and alert generated events.
 window.addEventListener("message", function (message) {
-  const data = message.data.data;
-  if (data.type === "init") {
+  const data = message?.data?.data || message?.data?.dataObj;
+  if (data?.type === "init" || data?.keyType === "init") {
     const addToCart = document.querySelector(".add-to-cart");
-    addToCart.innerHTML = config.button;
-    addToCart.style.background = theming.primaryColor;
-    listenToEvent("xr_added_to_cart", (e) => {
-      alert("The listener of the plugin is triggered with data: " + JSON.stringify(e));
-    });
+    addToCart.innerHTML = data?.config?.button;
+    addToCart.style.background = data?.theming?.primaryColor;
+  } else {
+    callBack(message.data);
   }
 });
+
+const emitEvent = (XREvent) => {
+  parent.postMessage(XREvent, "*");
+};
+
+const callBack = (data) => {
+  alert("callBack called plugin");
+};
 
 // This function will be called on trigger event click
 function clicked() {
@@ -27,6 +28,7 @@ function clicked() {
         name: "product 1",
       },
     },
+    eventType: "emit",
   };
   emitEvent(data);
 }

@@ -7,6 +7,7 @@ export enum XrTypes {
 
 export type values = {
   type: string;
+  keyType: string;
   minLength?: number;
   description?: string;
   placeHolder?: string;

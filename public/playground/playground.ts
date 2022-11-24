@@ -11,6 +11,16 @@ const jsonScheme = await import("./jsonSchemaTest.json", {
   assert: { type: "json" },
 });
 
+let Initialize = false;
+
+let emittedEvents = [] as string[];
+
+declare global {
+  interface Window {
+    MyNamespace: any;
+  }
+}
+
 let dataArray: Array<HTMLElement> = [];
 let count = 0;
 const createInput = (value: values, count: number, key: string) => {
@@ -82,7 +92,7 @@ const createRadio = (
   radioDiv.append(mainRadioDiv);
 };
 
-const textareaBuilder = (value: values) => {
+const textareaBuilder = (value: values, key?: string) => {
   const textareaMainDiv = document.createElement("div") as HTMLDivElement;
   if (value?.title) {
     const textareaLabel = document.createElement("label") as HTMLLabelElement;
@@ -92,6 +102,7 @@ const textareaBuilder = (value: values) => {
   }
   textareaMainDiv.classList.add("textarea-main-div");
   const textarea = document.createElement("textarea") as HTMLTextAreaElement;
+  key && (textarea.name = key);
   textarea.classList.add("inte-textarea");
   value.col && (textarea.cols = Number(value.col));
   value.row && (textarea.rows = Number(value.row));
@@ -121,7 +132,7 @@ const formCreation = (
     const labelText = values.title;
     createRadio(MainformDiv, options, key, labelText);
   } else if (values.type == "textarea") {
-    const textarea = textareaBuilder(values);
+    const textarea = textareaBuilder(values, key);
     MainformDiv.append(textarea);
   }
 };
@@ -139,10 +150,10 @@ const generateChildJson = (json: any) => {
   if (json.type != "string") {
     for (const [key, value] of Object.entries(json)) {
       let data = value as any;
-      if (data[key] != "string") {
-        if (data["type"] == "string") {
+      if (data[key] != "string" || data[key] != "selection") {
+        if (data["type"] == "string" || data["type"] == "selection") {
           childObj[key] = "";
-        } else if (data != "object") {
+        } else if (data.type == "object") {
           let val = generateChildJson(data);
           childObj[key] = val;
         }
@@ -156,20 +167,24 @@ const generateChildJson = (json: any) => {
 
 const generateEmptyJson = (json: any) => {
   for (const [key, value] of Object.entries(json)) {
-    let data = value as any;
-    if (data["type"] != "string") {
-      dataObj[key] = typeof value === "object" ? {} : "";
-      if (dataObj[key]) {
-        let obj = value as any;
-        for (const [childKey, value] of Object.entries(obj)) {
-          let dataVal = value as any;
-          if (dataVal != "object") {
-            dataObj[key][childKey] = generateChildJson(value);
+    if (key != "keyType") {
+      let data = value as any;
+      if (data["type"] != "string") {
+        dataObj[key] = typeof value === "object" ? {} : "";
+        if (dataObj[key]) {
+          let obj = value as any;
+          for (const [childKey, value] of Object.entries(obj)) {
+            let dataVal = value as any;
+            if (dataVal != "object") {
+              dataObj[key][childKey] = generateChildJson(value);
+            }
           }
         }
+      } else {
+        if (key != "type") dataObj[key] = "";
       }
     } else {
-      if (key != "type") dataObj[key] = "";
+      dataObj["keyType"] = value;
     }
   }
 };
@@ -227,14 +242,27 @@ const copyToClipboardButton = document.querySelector(
   ".inte-copy-text"
 ) as HTMLDivElement;
 
-function copyToClipboard() {
-  const form = new FormData(
-    document.getElementById("myForm") as HTMLFormElement
-  );
-  let object: any = {};
-  for (const [key, value] of form) {
-    object[key] = value;
+function eachRecursive(obj: any) {
+  for (var k in obj) {
+    const form = new FormData(
+      document.getElementById("myForm") as HTMLFormElement
+    );
+    for (const [key, val] of form) {
+      if (key === k) obj[key] = val;
+    }
+    if (typeof obj[k] == "object" && obj[k] !== null) {
+      eachRecursive(obj[k]);
+    } else {
+      for (const [key, val] of form) {
+        if (key === k) obj[key] = val;
+      }
+    }
   }
+}
+
+function copyToClipboard() {
+  eachRecursive(dataObj);
+  navigator.clipboard.writeText(JSON.stringify(dataObj));
 }
 
 copyToClipboardButton.addEventListener("click", copyToClipboard);
@@ -242,6 +270,7 @@ copyToClipboardButton.addEventListener("click", copyToClipboard);
 const generateFormButton = document.querySelector(
   ".inte-generate-btn"
 ) as HTMLButtonElement;
+
 generateFormButton.addEventListener("click", formBuilder);
 
 // Gather plugin configuration
@@ -258,30 +287,40 @@ const data: configurations = jsonModule.default;
 const iframe =
   (document.querySelector(".inte-iframe") as HTMLIFrameElement) || null;
 iframe.src = "../plugin/plugin.html";
-
-const iframeInput = document.querySelector(
-  "#inte-input-frame"
-) as HTMLInputElement;
-
-iframeInput.value = "../plugin/plugin.html";
-iframeInput.innerText = "../plugin/plugin.html";
 const initBtn = document.querySelector(".inte-init-btn") as HTMLButtonElement;
 
+function isEmpty(obj: any) {
+  for (var prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false;
+    }
+  }
+  return JSON.stringify(obj) === JSON.stringify({});
+}
 // Initialize iframe source and trigger init event inside it
 const initCalled = () => {
+  emittedEvents = [];
   const iWindow = (iframe?.contentWindow as CustomWindow) || null;
   if (iWindow) {
-    // Inject emit and listen functions
-    iWindow.emitEvent = emitEvent;
-    iWindow.listenToEvent = listenToEvent;
+    Initialize = true;
 
     // Trigger init event inside the iframe
-    iWindow.postMessage(
-      {
-        data,
-      },
-      "*"
-    );
+    eachRecursive(dataObj);
+    if (!isEmpty(dataObj)) {
+      iWindow.postMessage(
+        {
+          dataObj,
+        },
+        "*"
+      );
+    } else {
+      iWindow.postMessage(
+        {
+          data,
+        },
+        "*"
+      );
+    }
   }
 
   // Log the successful event generation message
@@ -326,6 +365,8 @@ const eventLogger = (e: any) => {
   eventLoggerDiv.append(p);
 };
 
+(window.parent as any).eventLogger = eventLogger;
+
 const generateBtn = document.querySelector(
   ".inte-generate-button"
 ) as HTMLButtonElement;
@@ -343,51 +384,44 @@ const generateEvent = () => {
     data: parsedValue,
     from: "playground",
   };
-
-  iframe?.contentWindow?.postMessage(
-    {
-      data,
-    },
-    "*"
-  );
+  if (
+    Object.keys(XrTypes).includes(typeValue) &&
+    emittedEvents.includes(typeValue)
+  ) {
+    iframe?.contentWindow?.postMessage(
+      {
+        event: typeValue,
+        data: parsedValue,
+      },
+      "*"
+    );
+    eventLogger(data);
+  }
 };
 
 generateBtn.onclick = generateEvent;
+
 // Emits event from iframe to playground and pass the XREvent object
 const emitEvent = (XREvent: XREvent) => {
-  if (Object.keys(XrTypes).includes(XREvent.event)) {
-    eventLogger(XREvent);
-    iframe.contentWindow?.postMessage(XREvent);
-  } else {
-    console.error("wrong event passed on emit.");
+  if (Object.keys(XrTypes).includes(XREvent.event) && Initialize == true) {
+    listenToEvent(XREvent);
   }
 };
 
-// Subscribe and listen to all the events coming up from the iframe
+//Listen To event from iframe to playground events.
 
-// Listen event callback handler
-const listenToEvent = (
-  XREvent: XrEventType,
-  callback?: (XREvent: any) => void
-) => {
-  if (Object.keys(XrTypes).includes(XREvent)) {
-    alert("Plugin will listen to " + XREvent + " from now on wards");
-
-    iframe.contentWindow?.addEventListener("message", function (e) {
-      if (e.data.data.event === XREvent || e.data.event === XREvent) {
-        const XrEventData = e.data.data.event ? e.data.data : e.data;
-        callbackHandler(XrEventData, callback);
-      }
-    });
-  } else {
-    console.error("unsupported event.");
-  }
+const listenToEvent = (XREvent: XREvent) => {
+  eventLogger(XREvent);
+  alert("callBack called playground");
 };
 
-// Iframe callback handler
-const callbackHandler = (XRevent: any, callback?: Function) => {
-  const xrEvent = XRevent.event as XrEventType;
-  if (Object.keys(XrTypes).includes(xrEvent)) {
-    callback?.(XRevent.data);
+// Subscribe and listen to emitEvent
+
+parent.addEventListener("message", function (e) {
+  if (e.data.eventType == "emit") {
+    if (!emittedEvents.includes(e.data.event)) {
+      emittedEvents.push(e.data.event);
+    }
+    emitEvent(e.data);
   }
-};
+});
